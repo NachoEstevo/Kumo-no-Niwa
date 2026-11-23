@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kumo no Niwa</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Linked here (not imported from main.js) so the page never paints unstyled -->
+    <link rel="stylesheet" href="/src/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Shippori+Mincho:wght@500;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="game-root"></div>
+
+    <!-- SVG symbols shared by the HUD -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <symbol id="ico-sun" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4.6" fill="currentColor" />
+        <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7 7 17M17 7l1.7-1.7" />
+        </g>
+      </symbol>
+      <symbol id="ico-dusk" viewBox="0 0 24 24">
+        <path d="M5 16a7 7 0 0 1 14 0z" fill="currentColor" />
+        <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M2.5 19.5h19M12 4.5v2.2M4.6 8.6l1.6 1.4M19.4 8.6l-1.6 1.4" />
+        </g>
+      </symbol>
+      <symbol id="ico-moon" viewBox="0 0 24 24">
+        <path d="M15.8 3.2A8.8 8.8 0 1 0 20.8 16 7.2 7.2 0 0 1 15.8 3.2z" fill="currentColor" />
+      </symbol>
+    </svg>
+
+    <!-- In-game HUD -->
+    <div id="hud" class="hidden">
+      <aside class="hud-left">
+        <div class="hud-chapter">
+          <span id="hud-chapter-roman" class="hud-roman">I</span>
+          <span id="hud-chapter-kanji" class="hud-chapter-kanji">雲上の湖</span>
+        </div>
+        <div class="seal-row" aria-label="Sanctuary seals">
+          <span id="seal-0" class="seal-stamp" title="Water Seal">水</span>
+          <span id="seal-1" class="seal-stamp" title="Bamboo Seal">竹</span>
+          <span id="seal-2" class="seal-stamp" title="Time Seal">月</span>
+        </div>
+        <div id="region-banner" class="region-banner">
+          <div id="hud-region-jp" class="hud-jp">南の雲見台</div>
+          <div id="hud-region-en" class="hud-region">South Overlook</div>
+        </div>
+      </aside>
+
+      <div class="hud-right">
+        <div class="sky-dial" role="group" aria-label="Time of day (T)">
+          <button class="sky-btn active" data-time-idx="0" type="button" title="Day">
+            <svg><use href="#ico-sun" /></svg>
+          </button>
+          <button class="sky-btn" data-time-idx="1" type="button" title="Dusk">
+            <svg><use href="#ico-dusk" /></svg>
+          </button>
+          <button class="sky-btn" data-time-idx="2" type="button" title="Night">
+            <svg><use href="#ico-moon" /></svg>
+          </button>
+          <kbd class="kc kc-sm">T</kbd>
+        </div>
+        <button id="btn-hint" class="hud-chip" type="button" title="Hint (H)"><kbd class="kc kc-sm">H</kbd><span>Hint</span></button>
+        <button id="btn-menu" class="hud-chip" type="button" title="Menu (Esc)"><kbd class="kc kc-sm">Esc</kbd><span>Menu</span></button>
+      </div>
+
+      <div id="toast-box" class="toast hidden" aria-live="polite"></div>
+
+      <button id="prompt-pill" class="prompt hidden" type="button">
+        <kbd id="prompt-key" class="kc">E</kbd><span id="prompt-label"></span>
+      </button>
+
+      <!-- Seal awakened stamp -->
+      <div id="seal-banner" class="seal-banner hidden" aria-live="polite">
+        <div id="seal-banner-kanji" class="seal-banner-kanji">水</div>
+        <div id="seal-banner-text" class="seal-banner-text">Water Seal awakened</div>
+      </div>
+
+      <!-- Large onboarding prompts -->
+      <div id="tutorial" class="tutorial hidden" aria-live="polite">
+        <div id="tut-keys" class="tut-keys"></div>
+        <div id="tut-title" class="tut-title"></div>
+        <div id="tut-sub" class="tut-sub"></div>
+      </div>
+      <div id="tut-marker" class="tut-marker hidden"><span class="tut-marker-ring"></span><span class="tut-marker-arrow"></span></div>
+    </div>
+
+    <!-- Real-time intro and ending -->
+    <div id="cinema-overlay" class="cinema-overlay hidden" aria-live="polite">
+      <div class="cinema-bar top"></div>
+      <div class="cinema-bar bottom"></div>
+      <div id="ending" class="ending hidden">
+        <div id="end-constellation" class="end-constellation"></div>
+        <div class="end-card">
+          <div class="end-card-kanji">終</div>
+          <div class="end-card-latin">Kumo no Niwa</div>
+        </div>
+        <div id="end-credits" class="end-credits"></div>
+      </div>
+      <div id="cinema-fade" class="cinema-fade"></div>
+      <div id="cinema-title" class="cinema-title">
+        <div class="cinema-title-kanji">雲の庭</div>
+        <div class="cinema-title-latin">Kumo no Niwa</div>
+      </div>
+      <div id="cinema-subtitles" class="cinema-subtitles empty">
+        <p id="cinema-caption" class="cinema-caption"></p>
+      </div>
+      <button id="btn-skip-intro" class="cinema-skip" type="button"><kbd class="kc kc-sm">Space</kbd> Skip</button>
+    </div>
+
+    <!-- Title / pause menu -->
+    <div id="title-screen" class="menu">
+      <div class="menu-shade"></div>
+      <div class="menu-column">
+        <header class="brand">
+          <div>
+            <h1 class="brand-title">Kumo no Niwa</h1>
+            <div class="brand-sub">A garden above the clouds</div>
+          </div>
+        </header>
+
+        <nav id="menu-list" class="menu-list" aria-label="Main menu">
+          <button class="menu-item" data-action="start" type="button">
+            <span class="mi-en" id="btn-start-label">Begin</span><span class="mi-jp">はじめる</span>
+          </button>
+          <button class="menu-item" data-action="chapters" type="button">
+            <span class="mi-en">Chapters</span><span class="mi-jp">章</span>
+          </button>
+          <button class="menu-item" data-action="settings" type="button">
+            <span class="mi-en">Settings</span><span class="mi-jp">設定</span>
+          </button>
+          <button class="menu-item" data-action="controls" type="button">
+            <span class="mi-en">Controls</span><span class="mi-jp">操作</span>
+          </button>
+          <button id="btn-replay-intro" class="menu-item hidden" data-action="intro" type="button">
+            <span class="mi-en">Watch Intro</span><span class="mi-jp">序章</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Side panels -->
+      <section id="panel-chapters" class="menu-panel" aria-label="Chapters">
+        <div class="panel-head"><span class="panel-jp">章</span><h2>Chapters</h2></div>
+        <div id="chapter-list" class="chapter-list"></div>
+        <div id="chapter-detail" class="chapter-detail"></div>
+      </section>
+
+      <section id="panel-settings" class="menu-panel" aria-label="Settings">
+        <div class="panel-head"><span class="panel-jp">設定</span><h2>Settings</h2></div>
+        <div class="set-row">
+          <span class="set-label">Visual style</span>
+          <div class="seg">
+            <button class="seg-btn active" data-quality="pixel-fine" type="button">Pixel</button>
+            <button class="seg-btn" data-quality="pixel-retro" type="button">Retro</button>
+            <button class="seg-btn" data-quality="hd" type="button">Painted</button>
+          </div>
+        </div>
+        <div class="set-row">
+          <span class="set-label">Camera</span>
+          <div class="seg">
+            <button class="seg-btn active" data-camera="diorama" type="button">Diorama</button>
+            <button class="seg-btn" data-camera="panoramic" type="button">Panorama</button>
+          </div>
+        </div>
+        <div class="set-row">
+          <label class="set-label" for="vol-slider">Volume <b id="vol-value">65%</b></label>
+          <input id="vol-slider" class="slider" type="range" min="0" max="100" value="65" />
+        </div>
+        <div class="set-row">
+          <span class="set-label">Tutorial</span>
+          <div class="seg"><button id="btn-replay-tutorial" class="seg-btn" type="button">Replay on next start</button></div>
+        </div>
+      </section>
+
+      <section id="panel-controls" class="menu-panel" aria-label="Controls">
+        <div class="panel-head"><span class="panel-jp">操作</span><h2>Controls</h2></div>
+        <div class="controls-grid">
+          <div class="ctl"><span class="ctl-keys"><kbd class="kc">W</kbd><kbd class="kc">A</kbd><kbd class="kc">S</kbd><kbd class="kc">D</kbd></span><span>Walk · or click the ground</span></div>
+          <div class="ctl"><span class="ctl-keys"><kbd class="kc kc-wide">Shift</kbd></span><span>Run</span></div>
+          <div class="ctl"><span class="ctl-keys"><kbd class="kc kc-wide">Space</kbd></span><span>Jump</span></div>
+          <div class="ctl"><span class="ctl-keys"><kbd class="kc">E</kbd></span><span>Interact · push · ring</span></div>
+          <div class="ctl"><span class="ctl-keys"><kbd class="kc">T</kbd></span><span>Turn the sky · Day, Dusk, Night</span></div>
+          <div class="ctl"><span class="ctl-keys"><kbd class="kc">F</kbd></span><span>Pet or call Mochi</span></div>
+          <div class="ctl"><span class="ctl-keys"><kbd class="kc">H</kbd></span><span>Hint</span></div>
+          <div class="ctl"><span class="ctl-keys"><kbd class="kc">Q</kbd><kbd class="kc">R</kbd></span><span>Rotate camera · wheel to zoom</span></div>
+          <div class="ctl"><span class="ctl-keys"><kbd class="kc">C</kbd><kbd class="kc">M</kbd></span><span>Camera view · mute</span></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Chapter completion -->
+    <div id="finale-overlay" class="finale hidden">
+      <div class="finale-inner">
+        <div id="finale-kicker" class="finale-kicker">第一章 完 · Chapter I complete</div>
+        <h2 id="finale-title">Voice of the Sanctuary</h2>
+        <p id="finale-text"></p>
+        <div id="finale-stats" class="finale-meta"></div>
+        <div class="finale-actions">
+          <button id="btn-finale-next" class="menu-item compact" type="button"><span class="mi-en">Next chapter</span></button>
+          <button id="btn-finale-explore" class="menu-item compact" type="button"><span class="mi-en">Keep exploring</span></button>
+          <button id="btn-finale-menu" class="menu-item compact" type="button"><span class="mi-en">Title</span></button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

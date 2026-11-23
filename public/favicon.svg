@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" shape-rendering="crispEdges">
+  <!-- Layered Kataware-doki twilight sky bands -->
+  <rect x="0" y="0" width="32" height="6" fill="#222966" />
+  <rect x="0" y="6" width="32" height="6" fill="#3e418a" />
+  <rect x="0" y="12" width="32" height="6" fill="#de6f93" />
+  <rect x="0" y="18" width="32" height="7" fill="#ffbe78" />
+  <rect x="0" y="25" width="32" height="7" fill="#fff0d4" />
+
+  <!-- Crescent moon & quiet evening stars -->
+  <rect x="5" y="3" width="3" height="1" fill="#fff2bd" />
+  <rect x="4" y="4" width="2" height="2" fill="#fff2bd" />
+  <rect x="5" y="6" width="3" height="1" fill="#fff2bd" />
+  <rect x="24" y="4" width="1" height="1" fill="#fff2bd" />
+  <rect x="27" y="8" width="1" height="1" fill="#ffd9a0" />
+
+  <!-- Top shadow cap of Kasagi beam -->
+  <rect x="5" y="8" width="22" height="1" fill="#241b42" />
+  <rect x="4" y="7" width="2" height="1" fill="#241b42" />
+  <rect x="26" y="7" width="2" height="1" fill="#241b42" />
+
+  <!-- Vermilion Torii top lintel (Kasagi) & highlight -->
+  <rect x="5" y="9" width="22" height="2" fill="#d93b2b" />
+  <rect x="4" y="8" width="2" height="1" fill="#f2624a" />
+  <rect x="26" y="8" width="2" height="1" fill="#f2624a" />
+  <rect x="6" y="9" width="20" height="1" fill="#f2624a" />
+
+  <!-- Nuki crossbeam & center tablet -->
+  <rect x="7" y="13" width="18" height="2" fill="#d93b2b" />
+  <rect x="15" y="11" width="2" height="2" fill="#241b42" />
+
+  <!-- Twin Torii pillars -->
+  <rect x="9" y="11" width="2" height="13" fill="#d93b2b" />
+  <rect x="21" y="11" width="2" height="13" fill="#d93b2b" />
+  <rect x="9" y="11" width="1" height="13" fill="#f2624a" />
+  <rect x="21" y="11" width="1" height="13" fill="#f2624a" />
+
+  <!-- Dark stone pillar bases -->
+  <rect x="8" y="23" width="4" height="2" fill="#241b42" />
+  <rect x="20" y="23" width="4" height="2" fill="#241b42" />
+
+  <!-- Drifting sea of clouds along bottom edge -->
+  <rect x="0" y="25" width="32" height="7" fill="#fcf4eb" />
+  <rect x="3" y="23" width="6" height="2" fill="#fcf4eb" />
+  <rect x="11" y="24" width="10" height="2" fill="#fcf4eb" />
+  <rect x="23" y="23" width="7" height="2" fill="#fcf4eb" />
+  <rect x="0" y="28" width="32" height="4" fill="#c7bde0" />
+  <rect x="4" y="27" width="8" height="1" fill="#dfd7f2" />
+  <rect x="18" y="27" width="11" height="1" fill="#dfd7f2" />
+</svg>
